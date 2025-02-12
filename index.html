@@ -1,32 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Docker Networking - Reveal.js Presentation</title>
-    <script src="https://cdn.jsdelivr.net/npm/reveal.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker Networking - Classroom Presentation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/black.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/markdown/markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.2.3/mermaid.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/black.css">
     <style>
-        pre code {
-            font-size: 18px;
-            background-color: #282a36;
-            color: #f8f8f2;
-            padding: 10px;
-            border-radius: 5px;
-            overflow-x: auto;
-            display: block;
-            max-height: 400px;
-        }
-        .reveal .slides {
-            background: linear-gradient(135deg, #8a3dff, #4fa16c);
-            color: #ffffff;
-        }
-        section {
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 20px;
-            border-radius: 10px;
-        }
+        pre code { background-color: #1e1e1e !important; color: white; }
+        .reveal h1, .reveal h2, .reveal h3 { color: #8a3dff; }
+        .reveal p { color: #4fa16c; }
     </style>
 </head>
 <body>
@@ -34,105 +23,136 @@
         <div class="slides">
             <section>
                 <h1>Docker Networking</h1>
-                <h3>A Comprehensive Guide</h3>
-                <p>By ARM</p>
+                <h2>Classroom Guide</h2>
+                <p>Understanding Docker networking in depth with real-world examples.</p>
             </section>
+
             <section>
-                <h2>Example Use Cases</h2>
-                <p>Understanding real-world applications of Docker networking is essential. It allows seamless communication between containers, improves security, and optimizes system performance. In this section, we explore three key use cases.</p>
+                <h2>What is Docker Networking?</h2>
+                <p>Docker networking enables communication between containers and external systems.</p>
+                <ul>
+                    <li>Bridge Networks</li>
+                    <li>Host Networks</li>
+                    <li>Overlay Networks</li>
+                    <li>Macvlan Networks</li>
+                    <li>None (Isolated) Networks</li>
+                </ul>
             </section>
+
             <section>
-                <section>
-                    <h2>NGINX as a Reverse Proxy</h2>
-                    <p>NGINX is widely used as a reverse proxy to distribute incoming traffic across multiple backend services. This helps with load balancing, SSL termination, and security improvements.</p>
-                </section>
-                <section>
-                    <h3>Why Use NGINX as a Reverse Proxy?</h3>
-                    <ul>
-                        <li>Distributes client requests efficiently to backend services.</li>
-                        <li>Reduces load on individual services by balancing traffic.</li>
-                        <li>Enables SSL termination for secure client-server communication.</li>
-                    </ul>
-                </section>
-                <section>
-                    <h3>Docker Implementation</h3>
-                    <p>Using Docker, we can set up NGINX as a reverse proxy by creating a dedicated network, deploying a backend service, and configuring NGINX to route requests appropriately.</p>
-                    <pre data-trim data-noescape><code>docker network create my_network
-
-docker run -d --name backend --network my_network my_backend_image
-
-docker run -d --name nginx --network my_network -p 80:80 nginx</code></pre>
-                    <div class="mermaid">
-                        graph LR;
-                        A[Client] -->|Request| B[NGINX Proxy];
-                        B -->|Forward| C[Backend Service];
-                    </div>
-                </section>
+                <h2>Bridge Network</h2>
+                <p>Default network for standalone containers.</p>
+                <pre><code data-trim data-noescape>
+# Create a bridge network
+docker network create --driver bridge my_bridge
+                </code></pre>
+                <pre class="mermaid">
+                  graph TD;
+                  A[Container A] -- Bridge --> B[Container B];
+                  B -- Bridge --> C[Container C];
+                  C -- External Network --> D[Internet];
+                </pre>
             </section>
+
             <section>
-                <section>
-                    <h2>Private Connection: Frontend & Backend</h2>
-                    <p>A private network between frontend and backend ensures that only necessary services can communicate. This prevents unauthorized access and strengthens security.</p>
-                </section>
-                <section>
-                    <h3>Why Use Private Networking?</h3>
-                    <ul>
-                        <li>Isolates backend services from external threats.</li>
-                        <li>Ensures only authorized communication within the network.</li>
-                        <li>Improves performance by reducing unnecessary network traffic.</li>
-                    </ul>
-                </section>
-                <section>
-                    <h3>Docker Implementation</h3>
-                    <p>We create a private network for the frontend and backend services, ensuring secure and restricted communication.</p>
-                    <pre data-trim data-noescape><code>docker network create app_network
-
-docker run -d --name backend --network app_network my_backend_image
-
-docker run -d --name frontend --network app_network -p 3000:3000 my_frontend_image</code></pre>
-                    <div class="mermaid">
-                        graph LR;
-                        A[Frontend] -->|Private Network| B[Backend];
-                    </div>
-                </section>
+                <h2>Host Network</h2>
+                <p>Bypasses Docker’s virtual network and uses the host network directly.</p>
+                <pre><code data-trim data-noescape>
+# Run container with host network
+docker run --rm --network host nginx
+                </code></pre>
             </section>
+
             <section>
-                <section>
-                    <h2>Backend & Database Network</h2>
-                    <p>Connecting backend services to a database in a secure way prevents unauthorized access and protects sensitive data.</p>
-                </section>
-                <section>
-                    <h3>Why Secure Backend-Database Communication?</h3>
-                    <ul>
-                        <li>Ensures only the backend can query the database.</li>
-                        <li>Prevents unauthorized database access from external sources.</li>
-                        <li>Improves security by keeping the database isolated.</li>
-                    </ul>
-                </section>
-                <section>
-                    <h3>Docker Implementation</h3>
-                    <p>We create a secure database network where only the backend service can connect to the database.</p>
-                    <pre data-trim data-noescape><code>docker network create db_network
-
-docker run -d --name database --network db_network -e POSTGRES_PASSWORD=mysecretpassword postgres
-
-docker run -d --name backend --network db_network -e DB_HOST=database my_backend_image</code></pre>
-                    <div class="mermaid">
-                        graph LR;
-                        A[Backend] -->|Queries| B[Database];
-                    </div>
-                </section>
+                <h2>NGINX Reverse Proxy</h2>
+                <p>Use NGINX as a proxy to route requests to multiple backend containers.</p>
+                <pre class="mermaid">
+                  graph TD;
+                  User -->|HTTP Request| NGINX;
+                  NGINX -->|Forwards| Backend1;
+                  NGINX -->|Forwards| Backend2;
+                </pre>
+                <pre><code data-trim data-noescape>
+version: '3.8'
+services:
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+    networks:
+      - mynetwork
+  backend1:
+    image: mybackend
+    networks:
+      - mynetwork
+  backend2:
+    image: mybackend
+    networks:
+      - mynetwork
+networks:
+  mynetwork:
+                </code></pre>
             </section>
+
+            <section>
+                <h2>Frontend-Backend Private Connection</h2>
+                <pre class="mermaid">
+                  graph TD;
+                  Frontend -- Private Network --> Backend;
+                  Backend -- Private Network --> Database;
+                </pre>
+                <pre><code data-trim data-noescape>
+version: '3.8'
+services:
+  frontend:
+    image: frontend
+    networks:
+      - internal_network
+  backend:
+    image: backend
+    networks:
+      - internal_network
+  database:
+    image: postgres
+    networks:
+      - internal_network
+networks:
+  internal_network:
+    driver: bridge
+                </code></pre>
+            </section>
+
+            <section>
+                <h2>Overlay Networks for Swarm</h2>
+                <pre class="mermaid">
+                  graph TD;
+                  Worker1 -- Overlay --> Worker2;
+                  Worker1 -- Overlay --> Worker3;
+                </pre>
+                <pre><code data-trim data-noescape>
+docker network create --driver overlay my_overlay
+                </code></pre>
+            </section>
+
             <section>
                 <h2>Conclusion</h2>
-                <p>Docker networking is a powerful tool for enabling secure, efficient, and scalable containerized applications. Understanding its various networking models allows developers to build robust systems that meet different architectural needs.</p>
-                <p>By utilizing private networks, reverse proxies, and secure backend-database connections, applications can achieve better performance, security, and maintainability.</p>
+                <p>Understanding Docker networks is crucial for containerized applications.</p>
+                <p>Key Takeaways:</p>
+                <ul>
+                    <li>Use bridge for default networking</li>
+                    <li>Host network for direct access</li>
+                    <li>Overlay for Swarm mode</li>
+                    <li>Macvlan for real IP assignment</li>
+                </ul>
             </section>
         </div>
     </div>
+
     <script>
-        mermaid.initialize({ startOnLoad: true });
-        Reveal.initialize();
+        Reveal.initialize({
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+        });
+        mermaid.initialize({ startOnLoad: true, theme: 'dark' });
     </script>
 </body>
 </html>
