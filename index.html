@@ -16,15 +16,15 @@
         }
         .reveal pre code {
             max-height: 600px;
-            font-size: 1.2em;
-            line-height: 1.4;
+            font-size: 1.4em;
+            line-height: 1.5;
         }
         .reveal section img {
             border: none;
             box-shadow: none;
         }
         .mermaid {
-            font-size: 0.8em;
+            font-size: 1em;
         }
     </style>
 </head>
@@ -38,15 +38,16 @@
                 <p>Advanced Container Networking for Production</p>
             </section>
 
-            <!-- Introduction -->
+            <!-- Table of Contents -->
             <section>
-                <h2>Course Overview</h2>
+                <h2>Table of Contents</h2>
                 <ul>
+                    <li>Introduction</li>
                     <li>Docker Network Types</li>
-                    <li>Network Drivers</li>
                     <li>Container Communication</li>
-                    <li>Service Discovery</li>
-                    <li>Network Security</li>
+                    <li>Security Best Practices</li>
+                    <li>Monitoring & Troubleshooting</li>
+                    <li>Production Considerations</li>
                 </ul>
             </section>
 
@@ -67,23 +68,7 @@
                 </section>
             </section>
 
-            <!-- Bridge Network Deep Dive -->
-            <section>
-                <section>
-                    <h2>Bridge Network Architecture</h2>
-                    <div class="mermaid">
-                        graph TB
-                            subgraph Host
-                            A[Container 1] --> B[docker0]
-                            C[Container 2] --> B
-                            B --> D[Host Network Interface]
-                            end
-                            D --> E[External Network]
-                    </div>
-                </section>
-            </section>
-
-            <!-- Network Commands -->
+            <!-- Commands -->
             <section data-markdown>
                 <script type="text/template">
                     ## Basic Network Commands
@@ -101,22 +86,7 @@
                 </script>
             </section>
 
-            <!-- Container Networking -->
-            <section>
-                <h2>Connecting Containers</h2>
-                <div class="mermaid">
-                    flowchart LR
-                        subgraph network1[Frontend Network]
-                        A[Nginx] --> B[React App]
-                        end
-                        subgraph network2[Backend Network]
-                        B --> C[API Server]
-                        C --> D[(Database)]
-                        end
-                </div>
-            </section>
-
-            <!-- Practical Example -->
+            <!-- Full Stack Example -->
             <section data-markdown>
                 <script type="text/template">
                     ## Full Stack Example
@@ -153,7 +123,7 @@
                 </script>
             </section>
 
-            <!-- Network Security -->
+            <!-- Security -->
             <section>
                 <h2>Network Security Best Practices</h2>
                 <div class="mermaid">
@@ -166,21 +136,7 @@
                 </div>
             </section>
 
-            <!-- Service Discovery -->
-            <section data-markdown>
-                <script type="text/template">
-                    ## Service Discovery
-
-                    ```bash
-                    # DNS-based service discovery
-                    docker run --name api --network my-network api-service
-                    docker run --name frontend --network my-network \
-                      -e API_URL=http://api:3000 frontend-app
-                    ```
-                </script>
-            </section>
-
-            <!-- Network Troubleshooting -->
+            <!-- Troubleshooting -->
             <section data-markdown>
                 <script type="text/template">
                     ## Troubleshooting Commands
@@ -209,67 +165,6 @@
                 </div>
             </section>
 
-            <!-- Nginx Configuration -->
-            <section data-markdown>
-                <script type="text/template">
-                    ## Nginx Load Balancer Config
-
-                    ```nginx
-                    upstream backend {
-                        server backend1:3000;
-                        server backend2:3000;
-                        server backend3:3000;
-                    }
-
-                    server {
-                        listen 80;
-                        location / {
-                            proxy_pass http://backend;
-                        }
-                    }
-                    ```
-                </script>
-            </section>
-
-            <!-- Network Scaling -->
-            <section>
-                <h2>Scaling Network Architecture</h2>
-                <div class="mermaid">
-                    graph TB
-                        subgraph DC1[Data Center 1]
-                        A[Load Balancer] --> B[Service 1]
-                        A --> C[Service 2]
-                        end
-                        subgraph DC2[Data Center 2]
-                        D[Load Balancer] --> E[Service 1]
-                        D --> F[Service 2]
-                        end
-                </div>
-            </section>
-
-            <!-- Network Monitoring -->
-            <section data-markdown>
-                <script type="text/template">
-                    ## Network Monitoring
-
-                    ```bash
-                    # Monitor network usage
-                    docker stats
-
-                    # Network metrics with cAdvisor
-                    docker run \
-                      --volume=/:/rootfs:ro \
-                      --volume=/var/run:/var/run:ro \
-                      --volume=/sys:/sys:ro \
-                      --volume=/var/lib/docker/:/var/lib/docker:ro \
-                      --publish=8080:8080 \
-                      --detach=true \
-                      --name=cadvisor \
-                      google/cadvisor:latest
-                    ```
-                </script>
-            </section>
-
             <!-- Network Policies -->
             <section>
                 <h2>Network Policies</h2>
@@ -284,19 +179,6 @@
                 </div>
             </section>
 
-            <!-- Production Considerations -->
-            <section data-markdown>
-                <script type="text/template">
-                    ## Production Readiness
-
-                    - Network Redundancy
-                    - Failover Strategies
-                    - Performance Monitoring
-                    - Security Compliance
-                    - Backup Networks
-                </script>
-            </section>
-
             <!-- Summary -->
             <section>
                 <h2>Key Takeaways</h2>
@@ -308,7 +190,6 @@
                     <li>Monitoring and Troubleshooting</li>
                 </ul>
             </section>
-
         </div>
     </div>
 
