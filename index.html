@@ -1,158 +1,343 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <title>Docker Networking - Deep Dive</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Docker Networking - Classroom Presentation</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/black.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/markdown/markdown.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.2.3/mermaid.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/black.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
     <style>
-        pre code { background-color: #1e1e1e !important; color: white; }
-        .reveal h1, .reveal h2, .reveal h3 { color: #8a3dff; }
-        .reveal p { color: #4fa16c; }
+        :root {
+            --r-main-color: #fff;
+            --r-heading-color: #8a3dff;
+            --r-link-color: #4fa16c;
+            --r-selection-background-color: #4fa16c;
+        }
+        .reveal pre code {
+            max-height: 600px;
+            font-size: 1.2em;
+            line-height: 1.4;
+        }
+        .reveal section img {
+            border: none;
+            box-shadow: none;
+        }
+        .mermaid {
+            font-size: 0.8em;
+        }
     </style>
 </head>
 <body>
     <div class="reveal">
         <div class="slides">
+            <!-- Title Slide -->
             <section>
                 <h1>Docker Networking</h1>
-                <h2>Classroom Guide</h2>
-                <p>Understanding Docker networking in depth with real-world examples.</p>
+                <h3>A Comprehensive Deep Dive</h3>
+                <p>Advanced Container Networking for Production</p>
             </section>
 
+            <!-- Introduction -->
             <section>
-                <h2>What is Docker Networking?</h2>
-                <p>Docker networking enables communication between containers and external systems.</p>
+                <h2>Course Overview</h2>
                 <ul>
-                    <li>Bridge Networks</li>
-                    <li>Host Networks</li>
-                    <li>Overlay Networks</li>
-                    <li>Macvlan Networks</li>
-                    <li>None (Isolated) Networks</li>
+                    <li>Docker Network Types</li>
+                    <li>Network Drivers</li>
+                    <li>Container Communication</li>
+                    <li>Service Discovery</li>
+                    <li>Network Security</li>
                 </ul>
             </section>
 
+            <!-- Network Types -->
             <section>
-                <h2>Bridge Network</h2>
-                <p>Default network for standalone containers.</p>
-                <pre><code data-trim data-noescape>
-# Create a bridge network
-docker network create --driver bridge my_bridge
-                </code></pre>
-                <pre class="mermaid">
-                  graph TD;
-                  A[Container A] -- Bridge --> B[Container B];
-                  B -- Bridge --> C[Container C];
-                  C -- External Network --> D[Internet];
-                </pre>
+                <section>
+                    <h2>Docker Network Types</h2>
+                    <div class="mermaid">
+                        graph TB
+                            A[Docker Networks] --> B[Bridge]
+                            A --> C[Host]
+                            A --> D[Overlay]
+                            A --> E[Macvlan]
+                            A --> F[None]
+                            B --> G[Default Bridge]
+                            B --> H[User-defined Bridge]
+                    </div>
+                </section>
             </section>
 
+            <!-- Bridge Network Deep Dive -->
             <section>
-                <h2>Host Network</h2>
-                <p>Bypasses Docker’s virtual network and uses the host network directly.</p>
-                <pre><code data-trim data-noescape>
-# Run container with host network
-docker run --rm --network host nginx
-                </code></pre>
+                <section>
+                    <h2>Bridge Network Architecture</h2>
+                    <div class="mermaid">
+                        graph TB
+                            subgraph Host
+                            A[Container 1] --> B[docker0]
+                            C[Container 2] --> B
+                            B --> D[Host Network Interface]
+                            end
+                            D --> E[External Network]
+                    </div>
+                </section>
             </section>
 
-            <section>
-                <h2>NGINX Reverse Proxy</h2>
-                <p>Use NGINX as a proxy to route requests to multiple backend containers.</p>
-                <pre class="mermaid">
-                  graph TD;
-                  User -->|HTTP Request| NGINX;
-                  NGINX -->|Forwards| Backend1;
-                  NGINX -->|Forwards| Backend2;
-                </pre>
-                <pre><code data-trim data-noescape>
-version: '3.8'
-services:
-  nginx:
-    image: nginx
-    ports:
-      - "80:80"
-    networks:
-      - mynetwork
-  backend1:
-    image: mybackend
-    networks:
-      - mynetwork
-  backend2:
-    image: mybackend
-    networks:
-      - mynetwork
-networks:
-  mynetwork:
-                </code></pre>
+            <!-- Network Commands -->
+            <section data-markdown>
+                <script type="text/template">
+                    ## Basic Network Commands
+
+                    ```bash
+                    # List networks
+                    docker network ls
+
+                    # Create a network
+                    docker network create --driver bridge my-network
+
+                    # Inspect network
+                    docker network inspect my-network
+                    ```
+                </script>
             </section>
 
+            <!-- Container Networking -->
             <section>
-                <h2>Frontend-Backend Private Connection</h2>
-                <pre class="mermaid">
-                  graph TD;
-                  Frontend -- Private Network --> Backend;
-                  Backend -- Private Network --> Database;
-                </pre>
-                <pre><code data-trim data-noescape>
-version: '3.8'
-services:
-  frontend:
-    image: frontend
-    networks:
-      - internal_network
-  backend:
-    image: backend
-    networks:
-      - internal_network
-  database:
-    image: postgres
-    networks:
-      - internal_network
-networks:
-  internal_network:
-    driver: bridge
-                </code></pre>
+                <h2>Connecting Containers</h2>
+                <div class="mermaid">
+                    flowchart LR
+                        subgraph network1[Frontend Network]
+                        A[Nginx] --> B[React App]
+                        end
+                        subgraph network2[Backend Network]
+                        B --> C[API Server]
+                        C --> D[(Database)]
+                        end
+                </div>
             </section>
 
-            <section>
-                <h2>Overlay Networks for Swarm</h2>
-                <pre class="mermaid">
-                  graph TD;
-                  Worker1 -- Overlay --> Worker2;
-                  Worker1 -- Overlay --> Worker3;
-                </pre>
-                <pre><code data-trim data-noescape>
-docker network create --driver overlay my_overlay
-                </code></pre>
+            <!-- Practical Example -->
+            <section data-markdown>
+                <script type="text/template">
+                    ## Full Stack Example
+
+                    ```yaml
+                    version: '3.8'
+                    services:
+                      nginx:
+                        image: nginx:alpine
+                        networks:
+                          - frontend
+                      frontend:
+                        build: ./frontend
+                        networks:
+                          - frontend
+                          - backend
+                      api:
+                        build: ./backend
+                        networks:
+                          - backend
+                          - db
+                      db:
+                        image: postgres:13
+                        networks:
+                          - db
+
+                    networks:
+                      frontend:
+                      backend:
+                        internal: true
+                      db:
+                        internal: true
+                    ```
+                </script>
             </section>
 
+            <!-- Network Security -->
             <section>
-                <h2>Conclusion</h2>
-                <p>Understanding Docker networks is crucial for containerized applications.</p>
-                <p>Key Takeaways:</p>
+                <h2>Network Security Best Practices</h2>
+                <div class="mermaid">
+                    flowchart TB
+                        subgraph Security Layers
+                        A[Network Isolation] --> B[Access Control]
+                        B --> C[TLS Encryption]
+                        C --> D[Network Policies]
+                        end
+                </div>
+            </section>
+
+            <!-- Service Discovery -->
+            <section data-markdown>
+                <script type="text/template">
+                    ## Service Discovery
+
+                    ```bash
+                    # DNS-based service discovery
+                    docker run --name api --network my-network api-service
+                    docker run --name frontend --network my-network \
+                      -e API_URL=http://api:3000 frontend-app
+                    ```
+                </script>
+            </section>
+
+            <!-- Network Troubleshooting -->
+            <section data-markdown>
+                <script type="text/template">
+                    ## Troubleshooting Commands
+
+                    ```bash
+                    # Check container networking
+                    docker exec container-name ip addr show
+
+                    # Test network connectivity
+                    docker exec container-name ping other-container
+
+                    # View network statistics
+                    docker network inspect network-name
+                    ```
+                </script>
+            </section>
+
+            <!-- Load Balancing -->
+            <section>
+                <h2>Load Balancing with Nginx</h2>
+                <div class="mermaid">
+                    graph LR
+                        A[Nginx] --> B[Backend 1]
+                        A --> C[Backend 2]
+                        A --> D[Backend 3]
+                </div>
+            </section>
+
+            <!-- Nginx Configuration -->
+            <section data-markdown>
+                <script type="text/template">
+                    ## Nginx Load Balancer Config
+
+                    ```nginx
+                    upstream backend {
+                        server backend1:3000;
+                        server backend2:3000;
+                        server backend3:3000;
+                    }
+
+                    server {
+                        listen 80;
+                        location / {
+                            proxy_pass http://backend;
+                        }
+                    }
+                    ```
+                </script>
+            </section>
+
+            <!-- Network Scaling -->
+            <section>
+                <h2>Scaling Network Architecture</h2>
+                <div class="mermaid">
+                    graph TB
+                        subgraph DC1[Data Center 1]
+                        A[Load Balancer] --> B[Service 1]
+                        A --> C[Service 2]
+                        end
+                        subgraph DC2[Data Center 2]
+                        D[Load Balancer] --> E[Service 1]
+                        D --> F[Service 2]
+                        end
+                </div>
+            </section>
+
+            <!-- Network Monitoring -->
+            <section data-markdown>
+                <script type="text/template">
+                    ## Network Monitoring
+
+                    ```bash
+                    # Monitor network usage
+                    docker stats
+
+                    # Network metrics with cAdvisor
+                    docker run \
+                      --volume=/:/rootfs:ro \
+                      --volume=/var/run:/var/run:ro \
+                      --volume=/sys:/sys:ro \
+                      --volume=/var/lib/docker/:/var/lib/docker:ro \
+                      --publish=8080:8080 \
+                      --detach=true \
+                      --name=cadvisor \
+                      google/cadvisor:latest
+                    ```
+                </script>
+            </section>
+
+            <!-- Network Policies -->
+            <section>
+                <h2>Network Policies</h2>
+                <div class="mermaid">
+                    flowchart TB
+                        subgraph Policies
+                        A[Ingress Rules] --> B[Allow Listed IPs]
+                        A --> C[Port Restrictions]
+                        D[Egress Rules] --> E[External Access]
+                        D --> F[Service Communication]
+                        end
+                </div>
+            </section>
+
+            <!-- Production Considerations -->
+            <section data-markdown>
+                <script type="text/template">
+                    ## Production Readiness
+
+                    - Network Redundancy
+                    - Failover Strategies
+                    - Performance Monitoring
+                    - Security Compliance
+                    - Backup Networks
+                </script>
+            </section>
+
+            <!-- Summary -->
+            <section>
+                <h2>Key Takeaways</h2>
                 <ul>
-                    <li>Use bridge for default networking</li>
-                    <li>Host network for direct access</li>
-                    <li>Overlay for Swarm mode</li>
-                    <li>Macvlan for real IP assignment</li>
+                    <li>Network Types and Use Cases</li>
+                    <li>Security Best Practices</li>
+                    <li>Container Communication Patterns</li>
+                    <li>Production Deployment Strategies</li>
+                    <li>Monitoring and Troubleshooting</li>
                 </ul>
             </section>
+
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/markdown/markdown.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/highlight.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/notes/notes.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.2.3/mermaid.min.js"></script>
     <script>
-        Reveal.initialize({
-            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#8a3dff',
+                secondaryColor: '#4fa16c',
+                tertiaryColor: '#fff'
+            }
         });
-        mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+
+        Reveal.initialize({
+            hash: true,
+            width: 1920,
+            height: 1080,
+            margin: 0.04,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+            highlight: {
+                highlightOnLoad: true
+            }
+        });
     </script>
 </body>
 </html>
