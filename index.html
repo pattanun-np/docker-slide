@@ -23,9 +23,6 @@
             border: none;
             box-shadow: none;
         }
-        .mermaid {
-            font-size: 1em;
-        }
     </style>
 </head>
 <body>
@@ -55,16 +52,16 @@
             <section>
                 <section>
                     <h2>Docker Network Types</h2>
-                    <div class="mermaid">
-                        graph TB
-                            A[Docker Networks] --> B[Bridge]
-                            A --> C[Host]
-                            A --> D[Overlay]
-                            A --> E[Macvlan]
-                            A --> F[None]
-                            B --> G[Default Bridge]
-                            B --> H[User-defined Bridge]
-                    </div>
+                    <pre>
+                        Docker Networks
+                        |-- Bridge
+                        |   |-- Default Bridge
+                        |   |-- User-defined Bridge
+                        |-- Host
+                        |-- Overlay
+                        |-- Macvlan
+                        |-- None
+                    </pre>
                 </section>
             </section>
 
@@ -86,97 +83,41 @@
                 </script>
             </section>
 
-            <!-- Full Stack Example -->
-            <section data-markdown>
-                <script type="text/template">
-                    ## Full Stack Example
-
-                    ```yaml
-                    version: '3.8'
-                    services:
-                      nginx:
-                        image: nginx:alpine
-                        networks:
-                          - frontend
-                      frontend:
-                        build: ./frontend
-                        networks:
-                          - frontend
-                          - backend
-                      api:
-                        build: ./backend
-                        networks:
-                          - backend
-                          - db
-                      db:
-                        image: postgres:13
-                        networks:
-                          - db
-
-                    networks:
-                      frontend:
-                      backend:
-                        internal: true
-                      db:
-                        internal: true
-                    ```
-                </script>
-            </section>
-
             <!-- Security -->
             <section>
                 <h2>Network Security Best Practices</h2>
-                <div class="mermaid">
-                    flowchart TB
-                        subgraph Security Layers
-                        A[Network Isolation] --> B[Access Control]
-                        B --> C[TLS Encryption]
-                        C --> D[Network Policies]
-                        end
-                </div>
-            </section>
-
-            <!-- Troubleshooting -->
-            <section data-markdown>
-                <script type="text/template">
-                    ## Troubleshooting Commands
-
-                    ```bash
-                    # Check container networking
-                    docker exec container-name ip addr show
-
-                    # Test network connectivity
-                    docker exec container-name ping other-container
-
-                    # View network statistics
-                    docker network inspect network-name
-                    ```
-                </script>
+                <pre>
+                    Security Layers
+                    |-- Network Isolation
+                    |-- Access Control
+                    |-- TLS Encryption
+                    |-- Network Policies
+                </pre>
             </section>
 
             <!-- Load Balancing -->
             <section>
                 <h2>Load Balancing with Nginx</h2>
-                <div class="mermaid">
-                    graph LR
-                        A[Nginx] --> B[Backend 1]
-                        A --> C[Backend 2]
-                        A --> D[Backend 3]
-                </div>
+                <pre>
+                    Nginx Load Balancer
+                    |-- Backend 1
+                    |-- Backend 2
+                    |-- Backend 3
+                </pre>
             </section>
 
             <!-- Network Policies -->
             <section>
                 <h2>Network Policies</h2>
-                <div class="mermaid">
-                    flowchart TB
-                        subgraph Policies
-                        A[Ingress Rules] --> B[Allow Listed IPs]
-                        A --> C[Port Restrictions]
-                        D[Egress Rules] --> E[External Access]
-                        D --> F[Service Communication]
-                        end
-                </div>
+                <pre>
+                    Network Policies
+                    |-- Ingress Rules
+                    |   |-- Allow Listed IPs
+                    |   |-- Port Restrictions
+                    |-- Egress Rules
+                    |   |-- External Access
+                    |   |-- Service Communication
+                </pre>
             </section>
 
             <!-- Summary -->
@@ -197,18 +138,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/markdown/markdown.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/highlight.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/notes/notes.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.2.3/mermaid.min.js"></script>
     <script>
-        mermaid.initialize({
-            startOnLoad: true,
-            theme: 'dark',
-            themeVariables: {
-                primaryColor: '#8a3dff',
-                secondaryColor: '#4fa16c',
-                tertiaryColor: '#fff'
-            }
-        });
-
         Reveal.initialize({
             hash: true,
             width: 1920,
