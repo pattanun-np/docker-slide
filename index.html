@@ -10,10 +10,13 @@
     <style>
         pre code {
             font-size: 18px;
-            background-color: #8a3dff;
-            color: #ffffff;
+            background-color: #282a36;
+            color: #f8f8f2;
             padding: 10px;
             border-radius: 5px;
+            overflow-x: auto;
+            display: block;
+            max-height: 400px;
         }
         .reveal .slides {
             background: linear-gradient(135deg, #8a3dff, #4fa16c);
@@ -54,7 +57,7 @@
                 <section>
                     <h3>Docker Implementation</h3>
                     <p>Using Docker, we can set up NGINX as a reverse proxy by creating a dedicated network, deploying a backend service, and configuring NGINX to route requests appropriately.</p>
-                    <pre><code>docker network create my_network
+                    <pre data-trim data-noescape><code>docker network create my_network
 
 docker run -d --name backend --network my_network my_backend_image
 
@@ -82,7 +85,7 @@ docker run -d --name nginx --network my_network -p 80:80 nginx</code></pre>
                 <section>
                     <h3>Docker Implementation</h3>
                     <p>We create a private network for the frontend and backend services, ensuring secure and restricted communication.</p>
-                    <pre><code>docker network create app_network
+                    <pre data-trim data-noescape><code>docker network create app_network
 
 docker run -d --name backend --network app_network my_backend_image
 
@@ -109,7 +112,7 @@ docker run -d --name frontend --network app_network -p 3000:3000 my_frontend_ima
                 <section>
                     <h3>Docker Implementation</h3>
                     <p>We create a secure database network where only the backend service can connect to the database.</p>
-                    <pre><code>docker network create db_network
+                    <pre data-trim data-noescape><code>docker network create db_network
 
 docker run -d --name database --network db_network -e POSTGRES_PASSWORD=mysecretpassword postgres
 
