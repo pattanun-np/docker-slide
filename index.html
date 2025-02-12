@@ -45,6 +45,19 @@
                     <li>Security Best Practices</li>
                     <li>Monitoring & Troubleshooting</li>
                     <li>Production Considerations</li>
+                    <li>Load Balancing & Scaling</li>
+                    <li>Practical Examples</li>
+                </ul>
+            </section>
+
+            <!-- Introduction -->
+            <section>
+                <h2>Introduction</h2>
+                <p>Networking is a crucial part of containerized applications. Docker provides several network drivers that help manage communication between containers.</p>
+                <ul>
+                    <li>Isolated networks for security</li>
+                    <li>Custom networks for flexibility</li>
+                    <li>Built-in service discovery</li>
                 </ul>
             </section>
 
@@ -62,6 +75,13 @@
                         |-- Macvlan
                         |-- None
                     </pre>
+                    <p>Each type has specific use cases:</p>
+                    <ul>
+                        <li><strong>Bridge</strong>: Default for containers, allowing isolated communication.</li>
+                        <li><strong>Host</strong>: Removes network isolation, using the host network.</li>
+                        <li><strong>Overlay</strong>: For multi-host communication with Swarm.</li>
+                        <li><strong>Macvlan</strong>: Assigns MAC addresses for direct communication.</li>
+                    </ul>
                 </section>
             </section>
 
@@ -79,19 +99,25 @@
 
                     # Inspect network
                     docker network inspect my-network
+
+                    # Remove a network
+                    docker network rm my-network
                     ```
                 </script>
             </section>
 
-            <!-- Security -->
+            <!-- Container Communication -->
             <section>
-                <h2>Network Security Best Practices</h2>
+                <h2>Container Communication</h2>
+                <p>Containers communicate via networks. You can connect them manually or use service discovery.</p>
                 <pre>
-                    Security Layers
-                    |-- Network Isolation
-                    |-- Access Control
-                    |-- TLS Encryption
-                    |-- Network Policies
+                    Docker Container Networking
+                    |-- App 1 (Nginx)
+                    |   |-- Connected to frontend network
+                    |-- App 2 (API Server)
+                    |   |-- Connected to backend network
+                    |-- Database (Postgres)
+                    |   |-- Connected to database network
                 </pre>
             </section>
 
@@ -104,31 +130,48 @@
                     |-- Backend 2
                     |-- Backend 3
                 </pre>
+                <p>Use Nginx as a load balancer with the following config:</p>
+                <pre>
+                    upstream backend {
+                        server backend1:3000;
+                        server backend2:3000;
+                        server backend3:3000;
+                    }
+
+                    server {
+                        listen 80;
+                        location / {
+                            proxy_pass http://backend;
+                        }
+                    }
+                </pre>
             </section>
 
-            <!-- Network Policies -->
+            <!-- Security -->
             <section>
-                <h2>Network Policies</h2>
+                <h2>Network Security Best Practices</h2>
                 <pre>
-                    Network Policies
-                    |-- Ingress Rules
-                    |   |-- Allow Listed IPs
-                    |   |-- Port Restrictions
-                    |-- Egress Rules
-                    |   |-- External Access
-                    |   |-- Service Communication
+                    Security Layers
+                    |-- Network Isolation
+                    |-- Access Control
+                    |-- TLS Encryption
+                    |-- Network Policies
                 </pre>
+                <ul>
+                    <li>Use internal networks for private services.</li>
+                    <li>Limit access using firewalls.</li>
+                    <li>Enable TLS encryption for sensitive data.</li>
+                </ul>
             </section>
 
             <!-- Summary -->
             <section>
                 <h2>Key Takeaways</h2>
                 <ul>
-                    <li>Network Types and Use Cases</li>
-                    <li>Security Best Practices</li>
-                    <li>Container Communication Patterns</li>
-                    <li>Production Deployment Strategies</li>
-                    <li>Monitoring and Troubleshooting</li>
+                    <li>Understand network types and their use cases.</li>
+                    <li>Secure container networks with policies.</li>
+                    <li>Use load balancing for scaling services.</li>
+                    <li>Monitor network activity to troubleshoot issues.</li>
                 </ul>
             </section>
         </div>
